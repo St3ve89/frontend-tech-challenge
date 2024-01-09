@@ -34,3 +34,25 @@ app.get('/feeds', (req, res) => {
     res.status(500).json({ error: 'Internal Server Error' });
   }
 });
+
+app.get('/comments/:briefref', (req, res) => {
+  const { briefref } = req.params;
+  try {
+    const comments = require('./data/comments.json');
+
+    const filteredComments = comments.filter(
+      (comment) => comment.briefref === briefref
+    );
+
+    if (filteredComments.length === 0) {
+      return res
+        .status(404)
+        .json({ error: 'No comments found for the specified briefref' });
+    }
+
+    res.json(filteredComments);
+  } catch (error) {
+    console.error(`Error fetching comments for briefref ${briefref}:`, error);
+    res.status(500).json({ error: 'Internal Server Error' });
+  }
+});
